@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.List
@@ -47,12 +48,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             PlaystocknotificationTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
+                AppRoot()
             }
         }
     }
@@ -67,11 +63,31 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 
 /**
+ * AppRoot : 透過判斷是否已經登入了 來決定要顯示 登入頁還是主畫面
+ */
+@Composable
+fun AppRoot(){
+    var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+
+    if(!isLoggedIn){
+        LoginScreen(
+            onLoginSuccess = {
+                //先不做驗證
+                isLoggedIn = true
+            }
+        )
+    }else{
+        MainTabScaffold()
+    }
+}
+
+
+/**
  * 登入頁面
  */
 @Composable
 fun LoginScreen(
-
+    onLoginSuccess : () -> Unit
 ){
     var account by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -113,7 +129,7 @@ fun LoginScreen(
 
             Button(
                 onClick = {
-
+                    onLoginSuccess()
                 }
             ) {
                 Text("登入")
@@ -157,6 +173,7 @@ fun MainTabScaffold(){
                 BottomTab.Search -> StockSearchScreen()
                 BottomTab.Favorite ->  FavoriteScreen()
                 BottomTab.Notification -> NotificationListScreen()
+                BottomTab.Profile -> ProfileListScreen()
             }
         }
     }
@@ -172,7 +189,8 @@ enum class BottomTab(
     Home("首頁", Icons.Filled.Home),
     Search("股票查詢", Icons.Filled.Search),
     Favorite("我的最愛", Icons.Filled.Favorite),
-    Notification("通知列表", Icons.Filled.List)
+    Notification("通知列表", Icons.Filled.List),
+    Profile("個人頁面", Icons.Filled.Face)
 }
 
 @Composable
@@ -194,6 +212,11 @@ fun FavoriteScreen(){
 fun NotificationListScreen(){
     CenterTitle(title = "通知列表 ex: xxx在 2026/1/31 10:05 達到 xx 元")
 }
+@Composable
+fun ProfileListScreen(){
+    CenterTitle(title = "個人頁面")
+}
+
 
 @Composable
 fun CenterTitle(title : String){
@@ -213,7 +236,7 @@ fun CenterTitle(title : String){
 fun LoginPreview() {
     PlaystocknotificationTheme {
         LoginScreen(
-
+            onLoginSuccess = {}
         )
     }
 }
