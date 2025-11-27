@@ -63,19 +63,7 @@ fun AppRoot(){
 
 
 
-/*
-定義四個tab
- */
-enum class BottomTab(
-    val title : String,
-    val icon: androidx.compose.ui.graphics.vector.ImageVector
-){
-    Home("首頁", Icons.Filled.Home),
-    Search("股票查詢", Icons.Filled.Search),
-    Favorite("我的最愛", Icons.Filled.Favorite),
-    Notification("通知列表", Icons.Filled.List),
-    Profile("個人頁面", Icons.Filled.Face)
-}
+
 
 
 @Preview(showBackground = true)
