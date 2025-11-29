@@ -11,7 +11,8 @@ data class LoginUiState(
     val email : String = "",
     val password : String = "",
     val isLoading : Boolean = false,
-    val errorMessage : String? = null
+    val errorMessage : String? = null,
+    val infoMessage : String? = null
 )
 
 class LoginViewModel : ViewModel(){
@@ -103,6 +104,43 @@ class LoginViewModel : ViewModel(){
             }
             else -> raw
         }
+    }
+
+    fun resetPassword(){
+        val email = uiState.email.trim()
+
+        if(email.isBlank()){
+            uiState = uiState.copy(
+                errorMessage = "請先輸入你的電子信箱",
+                infoMessage = null
+            )
+            return
+        }
+
+        uiState = uiState.copy(
+            isLoading = true,
+            errorMessage = null,
+            infoMessage = null
+        )
+
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful){
+                    uiState = uiState.copy(
+                        isLoading =  false,
+                        errorMessage = null,
+                        infoMessage = "重設密碼的信件已經寄出"
+                    )
+                }else{
+                    val msg = task.exception?.localizedMessage ?: "寄信失敗"
+                    uiState = uiState.copy(
+                        isLoading = false,
+                        errorMessage = msg,
+                        infoMessage = null
+                    )
+                }
+
+            }
     }
 
 }

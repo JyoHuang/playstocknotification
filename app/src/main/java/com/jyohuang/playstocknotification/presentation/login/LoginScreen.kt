@@ -1,6 +1,7 @@
 package com.jyohuang.playstocknotification.presentation.login
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -73,7 +76,20 @@ fun LoginScreen(
                 modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
             )
-            
+
+            //忘記密碼
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(4.dp),
+                contentAlignment = Alignment.CenterEnd
+            ){
+                TextButton(
+                    onClick = {viewModel.resetPassword()},
+                    enabled = !uiState.isLoading
+                ) {
+                    Text( text = "忘記密碼")
+                }
+            }
 
             //顯示錯誤訊息
             uiState.errorMessage?.let{ msg ->
@@ -82,6 +98,19 @@ fun LoginScreen(
                     text = msg,
                     color = MaterialTheme.colorScheme.error,
                     fontSize = 14.sp
+                )
+
+            }
+
+            //顯示提示訊息
+            uiState.infoMessage?.let{ msg ->
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = msg,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
                 )
 
             }
