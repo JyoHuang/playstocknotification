@@ -7,7 +7,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,20 +22,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 /**
  * 登入頁面
  */
 @Composable
 fun LoginScreen(
-    onLoginSuccess : () -> Unit
+    onLoginSuccess : () -> Unit,
+    viewModel: LoginViewModel = viewModel()
 ){
-    var account by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val uiState = viewModel.uiState
+
     Surface (
         modifier = Modifier.fillMaxSize()
     ){
@@ -51,8 +58,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = account,
-                onValueChange = { account = it},
+                value = uiState.email,
+                onValueChange = { viewModel.onEmailChanged(it) },
                 label = {Text("帳號")},
                 modifier = Modifier.fillMaxWidth()
             )
@@ -60,20 +67,51 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = password,
-                onValueChange = {password = it},
+                value = uiState.password,
+                onValueChange = {viewModel.onPasswordChanged(it)},
                 label = {Text("密碼")},
+                modifier = Modifier.fillMaxWidth(),
                 visualTransformation = PasswordVisualTransformation(),
             )
+            
+
+            //顯示錯誤訊息
+            uiState.errorMessage?.let{ msg ->
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = msg,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 14.sp
+                )
+
+            }
 
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
-                onClick = {
-                    onLoginSuccess()
-                }
+                onClick = { viewModel.login(onLoginSuccess)},
+                enabled = !uiState.isLoading
             ) {
-                Text("登入")
+               if(uiState.isLoading){
+                   CircularProgressIndicator(
+                       modifier = Modifier
+                           .size(18.dp),
+                       strokeWidth = 2.dp,
+                       color = MaterialTheme.colorScheme.onPrimary
+                   )
+                   Text("登入中")
+               }else{
+                   Text("登入")
+               }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            OutlinedButton(
+               onClick = { viewModel.register(onLoginSuccess)} ,
+                enabled = !uiState.isLoading
+            ) {
+                Text("註冊")
             }
         }
     }

@@ -21,9 +21,11 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
+import com.google.firebase.auth.FirebaseAuth
 import com.jyohuang.playstocknotification.presentation.login.LoginScreen
 import com.jyohuang.playstocknotification.presentation.main.MainTabScaffold
 import com.jyohuang.playstocknotification.ui.theme.PlaystocknotificationTheme
@@ -45,6 +47,7 @@ class MainActivity : ComponentActivity() {
  */
 @Composable
 fun AppRoot(){
+    val auth = remember { FirebaseAuth.getInstance() }
     var isLoggedIn by rememberSaveable { mutableStateOf(false) }
 
     if(!isLoggedIn){
@@ -55,7 +58,10 @@ fun AppRoot(){
             }
         )
     }else{
-        MainTabScaffold()
+        MainTabScaffold(onLogout = {
+            auth.signOut()
+            isLoggedIn = false
+        })
     }
 }
 
@@ -80,8 +86,8 @@ fun LoginPreview() {
 @Composable
 fun MainPagePreview() {
     PlaystocknotificationTheme {
-        MainTabScaffold(
+        MainTabScaffold(onLogout = {
 
-        )
+        })
     }
 }

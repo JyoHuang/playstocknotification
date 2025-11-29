@@ -1,22 +1,42 @@
 package com.jyohuang.playstocknotification.presentation.profile
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ProfileListScreen(){
+fun ProfileListScreen(
+    viewModel: ProfileViewModel = viewModel(),
+    onLogout : () -> Unit
+){
+    val auth = FirebaseAuth.getInstance()
+    val user = auth.currentUser
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ){
-        Text(
-            text = "個人頁面 登出 個人資料等等",
-            fontSize = 18.sp
-        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally){
+            Text(text = "帳號: ${ user?.email}")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(onClick = {
+                //auth.signOut()
+                onLogout()
+            }) {
+                Text("登出")
+            }
+        }
     }
 }

@@ -28,7 +28,8 @@ import com.jyohuang.playstocknotification.presentation.search.StockSearchScreen
 
 @Composable
 fun MainTabScaffold(
-    viewModel: MainViewModel = viewModel()
+    viewModel: MainViewModel = viewModel(),
+    onLogout : () -> Unit
 ){
     val currentTab = viewModel.currentTab
     Scaffold(
@@ -94,7 +95,7 @@ fun MainTabScaffold(
                 BottomTab.Search -> StockSearchScreen()
                 BottomTab.Favorite ->  FavoriteScreen()
                 BottomTab.Notification -> NotificationListScreen()
-                BottomTab.Profile -> ProfileListScreen()
+                BottomTab.Profile -> ProfileListScreen(onLogout = onLogout)
             }
         }
     }
