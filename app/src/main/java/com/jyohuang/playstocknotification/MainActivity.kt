@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppRoot(){
     val auth = remember { FirebaseAuth.getInstance() }
-    var isLoggedIn by rememberSaveable { mutableStateOf(false) }
+    var isLoggedIn by rememberSaveable { mutableStateOf(auth.currentUser != null) }
 
     if(!isLoggedIn){
         LoginScreen(
